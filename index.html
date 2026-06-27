@@ -122,12 +122,6 @@
             font-family: inherit;
         }
 
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #1F4E78;
-        }
-
         .form-buttons {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -413,25 +407,6 @@
             flex-wrap: wrap;
         }
 
-        .task-meta-item {
-            color: #666;
-        }
-
-        .task-meta-item strong {
-            color: #333;
-        }
-
-        .task-creator {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 11px;
-            margin-left: 10px;
-        }
-
-        .creator-owner { background: #ffe0e0; color: #C00000; }
-        .creator-employee { background: #f0f0f0; color: #000; }
-
         .task-actions {
             display: flex;
             gap: 10px;
@@ -449,6 +424,29 @@
 
         .btn-start { background: #0066cc; color: white; }
         .btn-complete { background: #4caf50; color: white; }
+
+        .assigned-section {
+            background: #f0f7ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border: 2px solid #0066cc;
+        }
+
+        .assigned-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #0066cc;
+            margin-bottom: 15px;
+        }
+
+        .assigned-item {
+            background: white;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 5px;
+            border-left: 3px solid #0066cc;
+        }
     </style>
 </head>
 <body>
@@ -531,7 +529,7 @@
 <!-- EMPLOYEE AUTH -->
 <div id="employeePage" class="form-page">
     <div class="form-container">
-        <h2 class="form-title">👤 EMPLOYEE</h2>
+        <h2 class="form-title">👤 EMPLOYEE LOGIN</h2>
         <div class="error-message" id="employeeError"></div>
 
         <div class="form-group">
@@ -571,6 +569,7 @@
         <!-- DASHBOARD -->
         <div id="dashboardTab" class="dashboard active">
             <div class="dashboard-grid" id="dashboardCards"></div>
+            <div id="assignedSection"></div>
         </div>
 
         <!-- SALES TAB -->
@@ -585,10 +584,10 @@
                     <div class="form-group">
                         <label>Customer *</label>
                         <select id="saleCustomer">
-                            <option value="">Select or add customer</option>
+                            <option value="">Select customer</option>
                             <option value="ABC Corp">ABC Corp</option>
                             <option value="XYZ Ltd">XYZ Ltd</option>
-                            <option value="New Customer">+ Add New Customer</option>
+                            <option value="New Customer">+ Add New</option>
                         </select>
                     </div>
                     <div id="newCustomerDiv" style="display: none;" class="form-group">
@@ -602,16 +601,15 @@
                             <option value="Printing">Printing</option>
                             <option value="Copying">Copying</option>
                             <option value="Design">Design</option>
-                            <option value="Other">Other</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Amount (ETB)</label>
                         <input type="number" id="saleAmount" placeholder="0">
                     </div>
-                    <div id="assignSaleDiv" class="form-group">
+                    <div class="form-group">
                         <label>Assign To</label>
-                        <input type="text" id="saleAssignedTo" placeholder="Employee name (optional)">
+                        <input type="text" id="saleAssignedTo" placeholder="Employee name">
                     </div>
                 </div>
                 <button class="btn-primary" onclick="addSale()">➕ Add Sale</button>
@@ -650,10 +648,7 @@
                             <option value="Rent">Rent</option>
                             <option value="Utilities">Utilities</option>
                             <option value="Supplies">Supplies</option>
-                            <option value="Equipment">Equipment</option>
                             <option value="Transport">Transport</option>
-                            <option value="Staff">Staff</option>
-                            <option value="Marketing">Marketing</option>
                             <option value="Other">Other</option>
                         </select>
                     </div>
@@ -688,15 +683,15 @@
         <!-- TASKS TAB -->
         <div id="tasksTab" class="dashboard hidden">
             <div class="form-container-app">
-                <h2 class="form-title-app" id="taskFormTitle">📋 Create Task/Order</h2>
+                <h2 class="form-title-app">📋 Create Task</h2>
                 <div class="form-grid">
                     <div class="form-group">
                         <label>Task Name *</label>
-                        <input type="text" id="taskName" placeholder="E.g., Print 500 flyers">
+                        <input type="text" id="taskName" placeholder="Task name">
                     </div>
                     <div class="form-group">
                         <label>Customer</label>
-                        <input type="text" id="taskCustomer" placeholder="Customer name (optional)">
+                        <input type="text" id="taskCustomer" placeholder="Customer (optional)">
                     </div>
                     <div class="form-group">
                         <label>Due Date *</label>
@@ -705,26 +700,25 @@
                     <div class="form-group">
                         <label>Priority</label>
                         <select id="taskPriority">
-                            <option value="">Select</option>
-                            <option value="High">🔴 High</option>
-                            <option value="Medium">🟠 Medium</option>
-                            <option value="Low">🟢 Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                            <option value="Low">Low</option>
                         </select>
                     </div>
-                    <div id="assignTaskDiv" class="form-group">
+                    <div class="form-group">
                         <label>Assign To</label>
                         <input type="text" id="taskAssignedTo" placeholder="Employee name">
                     </div>
                 </div>
                 <div class="form-group">
                     <label>Description</label>
-                    <textarea id="taskDescription" placeholder="Task details" style="min-height: 80px;"></textarea>
+                    <textarea id="taskDescription" placeholder="Details" style="min-height: 80px;"></textarea>
                 </div>
                 <button class="btn-primary" onclick="addTask()">➕ Create Task</button>
             </div>
 
             <div class="form-container-app">
-                <h2 class="form-title-app">All Tasks/Orders</h2>
+                <h2 class="form-title-app">All Tasks</h2>
                 <div id="tasksList"></div>
             </div>
         </div>
@@ -763,7 +757,7 @@
         <!-- REPORTS TAB (OWNER ONLY) -->
         <div id="reportsTab" class="dashboard hidden">
             <div class="form-container-app">
-                <h2 class="form-title-app">📊 Financial Reports</h2>
+                <h2 class="form-title-app">📊 Reports</h2>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
                     <div class="card">
                         <div style="font-weight: bold; color: #1F4E78; margin-bottom: 15px;">📅 Today</div>
@@ -780,13 +774,6 @@
                     </div>
 
                     <div class="card">
-                        <div style="font-weight: bold; color: #1F4E78; margin-bottom: 15px;">📈 This Month</div>
-                        <div style="padding: 8px 0;">Income: <strong id="reportMonthlyIncome">0 ETB</strong></div>
-                        <div style="padding: 8px 0;">Expenses: <strong id="reportMonthlyExpense">0 ETB</strong></div>
-                        <div style="padding: 8px 0; color: #FFC000;">Profit: <strong id="reportMonthlyProfit">0 ETB</strong></div>
-                    </div>
-
-                    <div class="card">
                         <div style="font-weight: bold; color: #1F4E78; margin-bottom: 15px;">💰 All Time</div>
                         <div style="padding: 8px 0;">Total Income: <strong id="reportTotalIncome">0 ETB</strong></div>
                         <div style="padding: 8px 0;">Total Expenses: <strong id="reportTotalExpense">0 ETB</strong></div>
@@ -799,25 +786,28 @@
 </div>
 
 <script>
-    let currentUser = null, users = [], companies = {}, sales = [], expenses = [], tasks = [], employees = [], customers = ['ABC Corp', 'XYZ Ltd'];
+    let currentUser = null;
+    let ownerID = null;
+    let users = [];
+    let ownerData = {};
 
     function loadData() {
-        if (localStorage.getItem('bahranUsers')) users = JSON.parse(localStorage.getItem('bahranUsers'));
-        if (localStorage.getItem('bahranCompanies')) companies = JSON.parse(localStorage.getItem('bahranCompanies'));
+        const savedUsers = localStorage.getItem('bahran_users');
+        const savedOwnerData = localStorage.getItem('bahran_ownerData');
+        if (savedUsers) users = JSON.parse(savedUsers);
+        if (savedOwnerData) ownerData = JSON.parse(savedOwnerData);
     }
 
     function saveData() {
-        localStorage.setItem('bahranUsers', JSON.stringify(users));
-        localStorage.setItem('bahranCompanies', JSON.stringify(companies));
-        if (currentUser) {
-            localStorage.setItem('sales_' + currentUser.id, JSON.stringify(sales));
-            localStorage.setItem('expenses_' + currentUser.id, JSON.stringify(expenses));
-            localStorage.setItem('tasks_' + currentUser.id, JSON.stringify(tasks));
-            localStorage.setItem('employees_' + currentUser.id, JSON.stringify(employees));
-        }
+        localStorage.setItem('bahran_users', JSON.stringify(users));
+        localStorage.setItem('bahran_ownerData', JSON.stringify(ownerData));
     }
 
-    function goToRoles() { document.getElementById('rolePage').style.display = 'flex'; document.getElementById('ownerPage').classList.remove('active'); document.getElementById('employeePage').classList.remove('active'); }
+    function goToRoles() { 
+        document.getElementById('rolePage').style.display = 'flex'; 
+        document.getElementById('ownerPage').classList.remove('active'); 
+        document.getElementById('employeePage').classList.remove('active'); 
+    }
     function goToOwner() { document.getElementById('rolePage').style.display = 'none'; document.getElementById('ownerPage').classList.add('active'); }
     function goToEmployee() { document.getElementById('rolePage').style.display = 'none'; document.getElementById('employeePage').classList.add('active'); }
 
@@ -835,7 +825,7 @@
         const password = document.getElementById('ownerPassword').value;
 
         if (!company || !fullName || !username || !password) {
-            document.getElementById('ownerError').textContent = 'Please fill all fields';
+            document.getElementById('ownerError').textContent = 'Fill all fields';
             document.getElementById('ownerError').classList.add('show');
             return;
         }
@@ -846,16 +836,21 @@
             return;
         }
 
-        const owner = { id: Date.now(), fullName, username, password, role: 'owner' };
+        const ownerId = Date.now();
+        const owner = { id: ownerId, fullName, username, password, role: 'owner', company };
         users.push(owner);
-        companies[owner.id] = { name: company };
+        
+        ownerData[ownerId] = {
+            company: company,
+            sales: [],
+            expenses: [],
+            tasks: [],
+            employees: []
+        };
+        
         saveData();
-
         currentUser = owner;
-        sales = [];
-        expenses = [];
-        tasks = [];
-        employees = [];
+        ownerID = ownerId;
         showApp();
     }
 
@@ -865,16 +860,13 @@
 
         const user = users.find(u => u.username === username && u.password === password && u.role === 'owner');
         if (!user) {
-            document.getElementById('ownerError').textContent = 'Invalid credentials';
+            document.getElementById('ownerError').textContent = 'Invalid login';
             document.getElementById('ownerError').classList.add('show');
             return;
         }
 
         currentUser = user;
-        sales = JSON.parse(localStorage.getItem('sales_' + user.id) || '[]');
-        expenses = JSON.parse(localStorage.getItem('expenses_' + user.id) || '[]');
-        tasks = JSON.parse(localStorage.getItem('tasks_' + user.id) || '[]');
-        employees = JSON.parse(localStorage.getItem('employees_' + user.id) || '[]');
+        ownerID = user.id;
         showApp();
     }
 
@@ -884,15 +876,13 @@
 
         const user = users.find(u => u.username === username && u.password === password && u.role === 'employee');
         if (!user) {
-            document.getElementById('employeeError').textContent = 'Invalid credentials';
+            document.getElementById('employeeError').textContent = 'Invalid login';
             document.getElementById('employeeError').classList.add('show');
             return;
         }
 
         currentUser = user;
-        sales = JSON.parse(localStorage.getItem('sales_' + user.id) || '[]');
-        expenses = JSON.parse(localStorage.getItem('expenses_' + user.id) || '[]');
-        tasks = JSON.parse(localStorage.getItem('tasks_' + user.id) || '[]');
+        ownerID = user.ownerId;
         showApp();
     }
 
@@ -902,8 +892,8 @@
         document.getElementById('employeePage').classList.remove('active');
         document.getElementById('appPage').classList.add('active');
 
-        const company = companies[currentUser.id];
-        document.getElementById('companyDisplay').textContent = company ? company.name : 'BAHRAN';
+        const company = ownerData[ownerID].company;
+        document.getElementById('companyDisplay').textContent = company || 'BAHRAN';
         document.getElementById('userDisplay').textContent = 'Welcome, ' + currentUser.fullName;
         document.getElementById('roleBadge').textContent = currentUser.role === 'owner' ? '👨‍💼 OWNER' : '👤 EMPLOYEE';
         document.getElementById('roleBadge').className = 'role-badge ' + (currentUser.role === 'owner' ? 'owner-badge' : 'employee-badge');
@@ -921,12 +911,12 @@
                 { id: 'dashboardTab', label: '📊 Dashboard' },
                 { id: 'salesTab', label: '💰 Sales' },
                 { id: 'expensesTab', label: '💸 Expenses' },
-                { id: 'tasksTab', label: '📋 Tasks/Orders' },
+                { id: 'tasksTab', label: '📋 Tasks' },
                 { id: 'employeesTab', label: '👥 Employees' },
                 { id: 'reportsTab', label: '📈 Reports' }
             ]
             : [
-                { id: 'dashboardTab', label: '📊 Today' },
+                { id: 'dashboardTab', label: '📊 My Work' },
                 { id: 'salesTab', label: '💰 Sales' },
                 { id: 'expensesTab', label: '💸 Expenses' },
                 { id: 'tasksTab', label: '📋 Tasks' }
@@ -939,9 +929,6 @@
             btn.onclick = () => switchTab(tab.id);
             navTabs.appendChild(btn);
         });
-
-        document.getElementById('assignTaskDiv').style.display = currentUser.role === 'owner' ? 'block' : 'none';
-        document.getElementById('assignSaleDiv').style.display = 'block';
     }
 
     function switchTab(tabId) {
@@ -959,45 +946,37 @@
     });
 
     function addSale() {
-        let customerName = document.getElementById('saleCustomer').value;
-        if (customerName === 'New Customer') {
-            customerName = document.getElementById('newCustomerName').value;
-            if (!customerName) {
-                alert('Please enter customer name');
-                return;
-            }
-            if (!customers.includes(customerName)) {
-                customers.push(customerName);
-            }
+        let customer = document.getElementById('saleCustomer').value;
+        if (customer === 'New Customer') {
+            customer = document.getElementById('newCustomerName').value;
+            if (!customer) { alert('Enter customer name'); return; }
         }
 
         const sale = {
             id: Date.now(),
             date: document.getElementById('saleDate').value,
-            customer: customerName,
+            customer,
             service: document.getElementById('serviceType').value,
             amount: parseFloat(document.getElementById('saleAmount').value),
             assignedTo: document.getElementById('saleAssignedTo').value
         };
 
         if (!sale.date || !sale.customer || !sale.service || !sale.amount) {
-            alert('Please fill required fields');
+            alert('Fill all fields');
             return;
         }
 
-        sales.push(sale);
+        ownerData[ownerID].sales.push(sale);
         saveData();
-        updateDashboard();
 
         document.getElementById('saleDate').value = '';
         document.getElementById('saleCustomer').value = '';
         document.getElementById('newCustomerName').value = '';
-        document.getElementById('newCustomerDiv').style.display = 'none';
         document.getElementById('serviceType').value = '';
         document.getElementById('saleAmount').value = '';
         document.getElementById('saleAssignedTo').value = '';
 
-        renderSales();
+        updateDashboard();
     }
 
     function renderSales() {
@@ -1005,7 +984,7 @@
         tbody.innerHTML = '';
         let total = 0;
 
-        sales.forEach(sale => {
+        ownerData[ownerID].sales.forEach(sale => {
             total += sale.amount;
             tbody.innerHTML += `
                 <tr>
@@ -1019,7 +998,7 @@
             `;
         });
 
-        tbody.innerHTML += `<tr class="total"><td colspan="4">TODAY TOTAL</td><td>${total.toLocaleString()}</td><td></td></tr>`;
+        tbody.innerHTML += `<tr class="total"><td colspan="4">TOTAL</td><td>${total.toLocaleString()}</td><td></td></tr>`;
     }
 
     function addExpense() {
@@ -1032,20 +1011,19 @@
         };
 
         if (!expense.date || !expense.category || !expense.desc || !expense.amount) {
-            alert('Please fill all fields');
+            alert('Fill all fields');
             return;
         }
 
-        expenses.push(expense);
+        ownerData[ownerID].expenses.push(expense);
         saveData();
-        updateDashboard();
 
         document.getElementById('expenseDate').value = '';
         document.getElementById('expenseCategory').value = '';
         document.getElementById('expenseDesc').value = '';
         document.getElementById('expenseAmount').value = '';
 
-        renderExpenses();
+        updateDashboard();
     }
 
     function renderExpenses() {
@@ -1053,7 +1031,7 @@
         tbody.innerHTML = '';
         let total = 0;
 
-        expenses.forEach(exp => {
+        ownerData[ownerID].expenses.forEach(exp => {
             total += exp.amount;
             tbody.innerHTML += `
                 <tr>
@@ -1066,7 +1044,7 @@
             `;
         });
 
-        tbody.innerHTML += `<tr class="total"><td colspan="3">TODAY TOTAL</td><td>${total.toLocaleString()}</td><td></td></tr>`;
+        tbody.innerHTML += `<tr class="total"><td colspan="3">TOTAL</td><td>${total.toLocaleString()}</td><td></td></tr>`;
     }
 
     function addTask() {
@@ -1075,64 +1053,57 @@
             name: document.getElementById('taskName').value,
             customer: document.getElementById('taskCustomer').value,
             dueDate: document.getElementById('taskDueDate').value,
-            priority: document.getElementById('taskPriority').value || 'Medium',
+            priority: document.getElementById('taskPriority').value,
             assignedTo: document.getElementById('taskAssignedTo').value,
             description: document.getElementById('taskDescription').value,
             status: 'Pending',
-            createdBy: currentUser.fullName,
-            createdByRole: currentUser.role
+            createdBy: currentUser.fullName
         };
 
         if (!task.name || !task.dueDate) {
-            alert('Please fill name and due date');
+            alert('Fill required fields');
             return;
         }
 
-        tasks.push(task);
+        ownerData[ownerID].tasks.push(task);
         saveData();
-        updateDashboard();
 
         document.getElementById('taskName').value = '';
         document.getElementById('taskCustomer').value = '';
         document.getElementById('taskDueDate').value = '';
-        document.getElementById('taskPriority').value = '';
+        document.getElementById('taskPriority').value = 'Medium';
         document.getElementById('taskAssignedTo').value = '';
         document.getElementById('taskDescription').value = '';
 
-        renderTasks();
+        updateDashboard();
     }
 
     function renderTasks() {
         const div = document.getElementById('tasksList');
         div.innerHTML = '';
 
-        if (tasks.length === 0) {
-            div.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">No tasks yet</div>';
+        if (ownerData[ownerID].tasks.length === 0) {
+            div.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">No tasks</div>';
             return;
         }
 
-        tasks.forEach(task => {
+        ownerData[ownerID].tasks.forEach(task => {
             const statusClass = task.status.toLowerCase().replace(' ', '-');
-            const creatorBadge = task.createdByRole === 'owner' 
-                ? `<span class="task-creator creator-owner">👨‍💼 Owner</span>`
-                : `<span class="task-creator creator-employee">👤 ${task.createdBy}</span>`;
-
             div.innerHTML += `
                 <div class="task-item ${statusClass}">
                     <div class="task-header">
-                        <div class="task-title">${task.name}${creatorBadge}</div>
+                        <div class="task-title">${task.name}</div>
                         <div class="task-status status-${statusClass}">${task.status}</div>
                     </div>
                     <div class="task-meta">
-                        <div class="task-meta-item">📅 <strong>${task.dueDate}</strong></div>
-                        <div class="task-meta-item">🔴 <strong>${task.priority}</strong></div>
-                        ${task.customer ? `<div class="task-meta-item">👤 <strong>${task.customer}</strong></div>` : ''}
-                        ${task.assignedTo ? `<div class="task-meta-item">👨‍💼 Assigned: <strong>${task.assignedTo}</strong></div>` : ''}
+                        <div>📅 ${task.dueDate}</div>
+                        <div>🔴 ${task.priority}</div>
+                        ${task.assignedTo ? `<div>👨‍💼 ${task.assignedTo}</div>` : ''}
                     </div>
-                    ${task.description ? `<div style="color: #666; font-size: 14px; margin-top: 10px;">${task.description}</div>` : ''}
+                    ${task.description ? `<div style="color: #666; margin-top: 10px;">${task.description}</div>` : ''}
                     <div class="task-actions">
-                        ${task.status !== 'In Progress' ? `<button class="btn-task btn-start" onclick="updateTaskStatus(${task.id}, 'In Progress')">▶️ Start</button>` : ''}
-                        ${task.status !== 'Completed' ? `<button class="btn-task btn-complete" onclick="updateTaskStatus(${task.id}, 'Completed')">✓ Done</button>` : ''}
+                        ${task.status !== 'In Progress' ? `<button class="btn-task btn-start" onclick="updateTaskStatus(${task.id}, 'In Progress')">Start</button>` : ''}
+                        ${task.status !== 'Completed' ? `<button class="btn-task btn-complete" onclick="updateTaskStatus(${task.id}, 'Completed')">Done</button>` : ''}
                         ${currentUser.role === 'owner' ? `<button class="btn-task btn-danger" onclick="deleteTask(${task.id})">Delete</button>` : ''}
                     </div>
                 </div>
@@ -1141,20 +1112,18 @@
     }
 
     function updateTaskStatus(id, newStatus) {
-        const task = tasks.find(t => t.id === id);
+        const task = ownerData[ownerID].tasks.find(t => t.id === id);
         if (task) {
             task.status = newStatus;
             saveData();
             updateDashboard();
-            renderTasks();
         }
     }
 
     function deleteTask(id) {
-        tasks = tasks.filter(t => t.id !== id);
+        ownerData[ownerID].tasks = ownerData[ownerID].tasks.filter(t => t.id !== id);
         saveData();
         updateDashboard();
-        renderTasks();
     }
 
     function addEmployee() {
@@ -1167,12 +1136,21 @@
         };
 
         if (!emp.name || !emp.username || !emp.password) {
-            alert('Please fill required fields');
+            alert('Fill required fields');
             return;
         }
 
-        users.push({ id: emp.id, fullName: emp.name, email: emp.email, username: emp.username, password: emp.password, role: 'employee' });
-        employees.push(emp);
+        users.push({ 
+            id: emp.id, 
+            fullName: emp.name, 
+            email: emp.email, 
+            username: emp.username, 
+            password: emp.password, 
+            role: 'employee',
+            ownerId: ownerID
+        });
+
+        ownerData[ownerID].employees.push(emp);
         saveData();
 
         document.getElementById('empName').value = '';
@@ -1187,16 +1165,16 @@
         const div = document.getElementById('employeesList');
         div.innerHTML = '';
 
-        if (employees.length === 0) {
+        if (ownerData[ownerID].employees.length === 0) {
             div.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">No employees</div>';
             return;
         }
 
-        employees.forEach(emp => {
+        ownerData[ownerID].employees.forEach(emp => {
             div.innerHTML += `
-                <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between;">
                     <div>
-                        <div style="font-weight: bold; color: #1F4E78;">${emp.name}</div>
+                        <div style="font-weight: bold;">${emp.name}</div>
                         <div style="font-size: 12px; color: #666;">${emp.email}</div>
                     </div>
                     <button class="btn-danger" onclick="deleteEmployee(${emp.id})">Remove</button>
@@ -1205,14 +1183,20 @@
         });
     }
 
-    function deleteSale(id) { sales = sales.filter(s => s.id !== id); saveData(); updateDashboard(); renderSales(); }
-    function deleteExpense(id) { expenses = expenses.filter(e => e.id !== id); saveData(); updateDashboard(); renderExpenses(); }
-    function deleteEmployee(id) { employees = employees.filter(e => e.id !== id); saveData(); renderEmployees(); }
+    function deleteSale(id) { ownerData[ownerID].sales = ownerData[ownerID].sales.filter(s => s.id !== id); saveData(); updateDashboard(); }
+    function deleteExpense(id) { ownerData[ownerID].expenses = ownerData[ownerID].expenses.filter(e => e.id !== id); saveData(); updateDashboard(); }
+    function deleteEmployee(id) { ownerData[ownerID].employees = ownerData[ownerID].employees.filter(e => e.id !== id); saveData(); renderEmployees(); }
 
     function getTodayData() {
-        const today = new Date().toISOString().split('T')[0];
-        const todaySales = sales.filter(s => s.date === today);
-        const todayExpenses = expenses.filter(e => e.date === today);
+        // Use local date, not UTC!
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        const todayStr = `${year}-${month}-${day}`;
+        
+        const todaySales = ownerData[ownerID].sales.filter(s => s.date === todayStr);
+        const todayExpenses = ownerData[ownerID].expenses.filter(e => e.date === todayStr);
 
         const income = todaySales.reduce((sum, s) => sum + s.amount, 0);
         const expense = todayExpenses.reduce((sum, e) => sum + e.amount, 0);
@@ -1220,7 +1204,48 @@
         return { income, expense, profit: income - expense };
     }
 
+    function showAssignedWork() {
+        const assignedSection = document.getElementById('assignedSection');
+        
+        // Clear for owner - show nothing
+        if (currentUser.role === 'owner') {
+            assignedSection.innerHTML = '';
+            return;
+        }
+
+        // For employee - show assigned work
+        const assignedSales = ownerData[ownerID].sales.filter(s => s.assignedTo && s.assignedTo.toLowerCase() === currentUser.fullName.toLowerCase());
+        const assignedTasks = ownerData[ownerID].tasks.filter(t => t.assignedTo && t.assignedTo.toLowerCase() === currentUser.fullName.toLowerCase());
+
+        let html = '';
+
+        if (assignedSales.length > 0) {
+            html += '<div class="assigned-section"><div class="assigned-title">💰 Your Assigned Sales</div>';
+            assignedSales.forEach(s => {
+                html += `<div class="assigned-item">${s.date} - ${s.customer} (${s.service}) - ${s.amount.toLocaleString()} ETB</div>`;
+            });
+            html += '</div>';
+        }
+
+        if (assignedTasks.length > 0) {
+            html += '<div class="assigned-section"><div class="assigned-title">📋 Your Assigned Tasks</div>';
+            assignedTasks.forEach(t => {
+                html += `<div class="assigned-item"><strong>${t.name}</strong> - Due: ${t.dueDate} (${t.status})</div>`;
+            });
+            html += '</div>';
+        }
+
+        if (assignedSales.length === 0 && assignedTasks.length === 0) {
+            html = '<div style="padding: 20px; text-align: center; color: #999;">No tasks or sales assigned yet</div>';
+        }
+
+        assignedSection.innerHTML = html;
+    }
+
     function updateDashboard() {
+        // Clear assigned section first to prevent any content bleed
+        document.getElementById('assignedSection').innerHTML = '';
+        
         const { income, expense, profit } = getTodayData();
 
         document.getElementById('dashboardCards').innerHTML = `
@@ -1241,6 +1266,7 @@
         renderSales();
         renderExpenses();
         renderTasks();
+        showAssignedWork();
 
         if (currentUser.role === 'owner') {
             renderEmployees();
@@ -1250,41 +1276,46 @@
 
     function updateReports() {
         const today = new Date();
-        const todayStr = today.toISOString().split('T')[0];
-        const weekStart = new Date(today.setDate(today.getDate() - today.getDay())).toISOString().split('T')[0];
-        const monthStart = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
+        
+        // Use local date, not UTC!
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        const todayStr = `${year}-${month}-${day}`;
+        
+        // Create a separate date for week calculation
+        const weekDate = new Date(today);
+        const weekStart = new Date(weekDate.setDate(weekDate.getDate() - weekDate.getDay()));
+        const weekStartYear = weekStart.getFullYear();
+        const weekStartMonth = String(weekStart.getMonth() + 1).padStart(2, '0');
+        const weekStartDay = String(weekStart.getDate()).padStart(2, '0');
+        const weekStartStr = `${weekStartYear}-${weekStartMonth}-${weekStartDay}`;
 
-        const daySales = sales.filter(s => s.date === todayStr).reduce((sum, s) => sum + s.amount, 0);
-        const dayExpense = expenses.filter(e => e.date === todayStr).reduce((sum, e) => sum + e.amount, 0);
+        const daySales = ownerData[ownerID].sales.filter(s => s.date === todayStr).reduce((sum, s) => sum + s.amount, 0);
+        const dayExp = ownerData[ownerID].expenses.filter(e => e.date === todayStr).reduce((sum, e) => sum + e.amount, 0);
 
         document.getElementById('reportDailyIncome').textContent = daySales.toLocaleString() + ' ETB';
-        document.getElementById('reportDailyExpense').textContent = dayExpense.toLocaleString() + ' ETB';
-        document.getElementById('reportDailyProfit').textContent = (daySales - dayExpense).toLocaleString() + ' ETB';
+        document.getElementById('reportDailyExpense').textContent = dayExp.toLocaleString() + ' ETB';
+        document.getElementById('reportDailyProfit').textContent = (daySales - dayExp).toLocaleString() + ' ETB';
 
-        const weekSales = sales.filter(s => s.date >= weekStart).reduce((sum, s) => sum + s.amount, 0);
-        const weekExpense = expenses.filter(e => e.date >= weekStart).reduce((sum, e) => sum + e.amount, 0);
+        const weekSales = ownerData[ownerID].sales.filter(s => s.date >= weekStartStr).reduce((sum, s) => sum + s.amount, 0);
+        const weekExp = ownerData[ownerID].expenses.filter(e => e.date >= weekStartStr).reduce((sum, e) => sum + e.amount, 0);
 
         document.getElementById('reportWeeklyIncome').textContent = weekSales.toLocaleString() + ' ETB';
-        document.getElementById('reportWeeklyExpense').textContent = weekExpense.toLocaleString() + ' ETB';
-        document.getElementById('reportWeeklyProfit').textContent = (weekSales - weekExpense).toLocaleString() + ' ETB';
+        document.getElementById('reportWeeklyExpense').textContent = weekExp.toLocaleString() + ' ETB';
+        document.getElementById('reportWeeklyProfit').textContent = (weekSales - weekExp).toLocaleString() + ' ETB';
 
-        const monthSales = sales.filter(s => s.date >= monthStart).reduce((sum, s) => sum + s.amount, 0);
-        const monthExpense = expenses.filter(e => e.date >= monthStart).reduce((sum, e) => sum + e.amount, 0);
-
-        document.getElementById('reportMonthlyIncome').textContent = monthSales.toLocaleString() + ' ETB';
-        document.getElementById('reportMonthlyExpense').textContent = monthExpense.toLocaleString() + ' ETB';
-        document.getElementById('reportMonthlyProfit').textContent = (monthSales - monthExpense).toLocaleString() + ' ETB';
-
-        const totalSales = sales.reduce((sum, s) => sum + s.amount, 0);
-        const totalExpense = expenses.reduce((sum, e) => sum + e.amount, 0);
+        const totalSales = ownerData[ownerID].sales.reduce((sum, s) => sum + s.amount, 0);
+        const totalExp = ownerData[ownerID].expenses.reduce((sum, e) => sum + e.amount, 0);
 
         document.getElementById('reportTotalIncome').textContent = totalSales.toLocaleString() + ' ETB';
-        document.getElementById('reportTotalExpense').textContent = totalExpense.toLocaleString() + ' ETB';
-        document.getElementById('reportTotalProfit').textContent = (totalSales - totalExpense).toLocaleString() + ' ETB';
+        document.getElementById('reportTotalExpense').textContent = totalExp.toLocaleString() + ' ETB';
+        document.getElementById('reportTotalProfit').textContent = (totalSales - totalExp).toLocaleString() + ' ETB';
     }
 
     function logout() {
         currentUser = null;
+        ownerID = null;
         ownerSignupMode = true;
         document.getElementById('appPage').classList.remove('active');
         document.getElementById('rolePage').style.display = 'flex';
